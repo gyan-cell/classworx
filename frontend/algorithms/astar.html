@@ -10,8 +10,6 @@
 
 
   <style>
-    /* Generator CSS */
-
     .generator-container {
       display: flex;
       justify-content: center;
@@ -106,7 +104,6 @@
       background-color: black;
     }
 
-    /* Output */
 
     .output {
       display: flex;
@@ -133,7 +130,6 @@
       align-self: center;
     }
 
-    /* Settings */
 
     .settings {
       display: flex;
@@ -247,57 +243,39 @@
     </div>
   </div>
   <script>
-    // Generator Canvas------------------------------//
-    //Set onscreen canvas and its context
     let onScreenCVS = document.querySelector(".map");
     let onScreenCTX = onScreenCVS.getContext("2d");
-
-    //Create an offscreen canvas. This is where we will actually be drawing, 
-    //in order to keep the image consistent and free of distortions.
     let offScreenCVS = document.createElement('canvas');
     let offScreenCTX = offScreenCVS.getContext("2d");
 
-    //Set Tile Size
     let tileSize = 16;
-    //Set the dimensions of the drawing canvas
     offScreenCVS.width = 32;
     offScreenCVS.height = 20;
 
-    //Create an Image with a default source of the existing onscreen canvas
     let img = new Image;
     let source = offScreenCVS.toDataURL();
 
-    //Add event listeners for the mouse moving, downclick, and upclick
     onScreenCVS.addEventListener('mousemove', handleMouseMove);
     onScreenCVS.addEventListener('mousedown', handleMouseDown);
     onScreenCVS.addEventListener('mouseup', handleMouseUp);
 
-    //We only want the mouse to move if the mouse is down, so we need a 
-    //variable to disable drawing while the mouse is not clicked.
     let clicked = false;
 
     function handleMouseMove(e) {
       if (clicked) {
         draw(e)
-        // generateMap();
       }
     }
 
     function handleMouseDown(e) {
       clicked = true;
       draw(e);
-      // generateMap();
     }
 
     function handleMouseUp() {
       clicked = false;
     }
 
-    //Helper functions
-
-    //Draw a single pixel on the canvas. Get the ratio of the difference in 
-    //size of the on and offscreen canvases to calculate where to draw on the 
-    //offscreen canvas based on the coordinates of clicking on the onscreen canvas.
     function draw(e) {
       let ratio = onScreenCVS.width / offScreenCVS.width;
       if (offScreenCTX.fillStyle === "rgba(0, 0, 0, 0)") {
@@ -307,37 +285,30 @@
         for (let i = 0; i < imageData.data.length; i += 4) {
           let x = i / 4 % offScreenCVS.width, y = (i / 4 - x) / offScreenCVS.width;
           let color = `rgba(${imageData.data[i]}, ${imageData.data[i + 1]}, ${imageData.data[i + 2]}, ${imageData.data[i + 3]})`
-          //Clear other pixels of same color
           if (color === "rgba(255, 165, 0, 255)") {
             offScreenCTX.clearRect(x, y, 1, 1);
           }
         }
-        //Draw pixel
         offScreenCTX.fillRect(Math.floor(e.offsetX / ratio), Math.floor(e.offsetY / ratio), 1, 1);
       } else if (offScreenCTX.fillStyle === "#0000ff") {
         let imageData = offScreenCTX.getImageData(0, 0, offScreenCVS.width, offScreenCVS.height);
         for (let i = 0; i < imageData.data.length; i += 4) {
           let x = i / 4 % offScreenCVS.width, y = (i / 4 - x) / offScreenCVS.width;
           let color = `rgba(${imageData.data[i]}, ${imageData.data[i + 1]}, ${imageData.data[i + 2]}, ${imageData.data[i + 3]})`
-          //Clear other pixels of same color
           if (color === "rgba(0, 0, 255, 255)") {
             offScreenCTX.clearRect(x, y, 1, 1);
           }
         }
-        //Draw pixel
         offScreenCTX.fillRect(Math.floor(e.offsetX / ratio), Math.floor(e.offsetY / ratio), 1, 1);
       } else {
         offScreenCTX.fillRect(Math.floor(e.offsetX / ratio), Math.floor(e.offsetY / ratio), 1, 1);
       }
-      //Set the source of the image to the offscreen canvas
       source = offScreenCVS.toDataURL();
       renderImage();
     }
 
-    //Once the image is loaded, draw the image onto the onscreen canvas.
     function renderImage() {
       img.onload = () => {
-        //Prevent blurring
         onScreenCTX.imageSmoothingEnabled = false;
         onScreenCTX.clearRect(0, 0, onScreenCVS.width, onScreenCVS.height);
         onScreenCTX.drawImage(img, 0, 0, onScreenCVS.width, onScreenCVS.height)
@@ -347,7 +318,6 @@
       img.src = source;
     }
 
-    //-------------------------------Palette----------------------------------//
     let palette = document.querySelector('.color-select');
 
     palette.addEventListener('click', selectColor)
@@ -364,18 +334,13 @@
         }
       });
     }
-    //-------------------------------Output-----------------------------------//
     let steps = document.querySelector('.steps');
     let pathLength = document.querySelector('.path');
 
-    //Set rounding precision
     let decPlace = 1000;
 
-    //------------------------------Settings----------------------------------//
-    //Set Diagonals On/Off
     let diagonals = true;
 
-    //Sliders
     let delaySlider = document.querySelector('#stepDelay');
     let delayDisplay = document.querySelector('.delay');
 
@@ -408,7 +373,6 @@
       decPlace = Math.pow(10, precSlider.value);
       precisionDisplay.textContent = decPlace;
     }
-    //Heuristics
     let hButtons = document.querySelector('#heuristic');
 
     hButtons.addEventListener('input', updateHeuristic);
@@ -426,7 +390,6 @@
       }
     }
 
-    //fCost Calc Methods
     let fButtons = document.querySelector('#fCost');
 
     fButtons.addEventListener('input', updateFCalc);
@@ -439,7 +402,6 @@
       }
     }
 
-    //Tie Breakers
     let tieButtons = document.querySelector('#tieBreak');
 
     tieButtons.addEventListener('input', updateTieBreak);
@@ -459,10 +421,7 @@
         compareFCost = naiveRank;
       }
     }
-    //----------------------------Calc Functions------------------------------//
-    //********* Calculate gCost ***********//
     let calcGCost = calcPath;
-    //Calculate path distance
     function calcPath(node) {
       let curr = node;
       let cost = 0;
@@ -474,16 +433,12 @@
       cost = Math.floor(cost * decPlace) / decPlace;
       return cost;
     }
-    //********* Calculate hCost ***********//
-    //node1 is current node, node2 is end node
     let calcHCost = octile;
-    //Manhattan Distance (without diagonal movement)
     function manhattan(node1, node2) {
       let a = Math.abs(node1.x - node2.x);
       let b = Math.abs(node1.y - node2.y);
       return a + b;
     }
-    //Octile Distance (with diagonal movement)
     function octile(node1, node2) {
       let a = Math.abs(node1.x - node2.x);
       let b = Math.abs(node1.y - node2.y);
@@ -495,14 +450,11 @@
       let sum = diagonalCost + horizontalCost;
       return Math.floor(sum * decPlace) / decPlace;
     }
-    //Euclidean Distance (with diagonal movement)
     function euclid(node1, node2) {
       let distance = Math.hypot(node1.x - node2.x, node1.y - node2.y);
       return Math.floor(distance * decPlace) / decPlace;
     }
-    //********* fCost Tie Breakers using hCost ***********//
     let tieBreak = crossBreak;
-    //Tiebreak with cross product to favor paths closer to a straight line to the goal
     function crossBreak(node) {
       let dx1 = node.x - end.x;
       let dy1 = node.y - end.y;
@@ -512,29 +464,21 @@
       let breaker = cross * (1 / decPlace)
       return breaker;
     }
-    //Prioritize closest to goal
     function proximBreak(node) {
-      //dwarf gCost
       let breaker = euclid(node, end) * (1 / decPlace);
       return breaker;
     }
-    //No Tie Break
     function noBreak(node) {
       return 0;
     }
-    //************* Calc fCost **************//
     let calcFCost = sumCost;
-    //Simple sum
     function sumCost(g, h) {
       return Math.floor((g + h) * decPlace) / decPlace;
     }
-    //Ignore gCost
     function ignoreG(g, h) {
       return h;
     }
-    //************* Rank fCost **************//
     let compareFCost = deferToH;
-    //Rank by fCost, then hCost if equal.
     function deferToH(obj1, obj2) {
       if (obj1.fCost === obj2.fCost) {
         if (obj1.hCost > obj2.hCost) {
@@ -549,7 +493,6 @@
       }
       return 0;
     }
-    //Rank by fCost, naive
     function naiveRank(obj1, obj2) {
       if (obj1.fCost > obj2.fCost) {
         return 1;
@@ -558,11 +501,9 @@
       }
       return 0;
     }
-    //--------------------------------Grid------------------------------------//
     let gameGrid = [];
     let start = {};
     let end = {};
-    //walls list for drawing during pathfinding steps
     let walls = [];
 
     function generateMap(e) {
@@ -570,7 +511,6 @@
       start = {};
       end = {};
       let imageData = offScreenCTX.getImageData(0, 0, offScreenCVS.width, offScreenCVS.height);
-      //Make the 2D array to hold all objects
       for (let i = 0; i < offScreenCVS.height; i++) {
         gameGrid[i] = [];
         for (let j = 0; j < offScreenCVS.width; j++) {
@@ -580,48 +520,37 @@
           onScreenCTX.stroke();
         }
       }
-      //Reset walls
       walls = [];
-      //Iterate through pixels and make objects each time a color matches
       for (let i = 0; i < imageData.data.length; i += 4) {
         let x = i / 4 % offScreenCVS.width, y = (i / 4 - x) / offScreenCVS.width;
         let color = `rgba(${imageData.data[i]}, ${imageData.data[i + 1]}, ${imageData.data[i + 2]}, ${imageData.data[i + 3]})`
         switch (color) {
           case "rgba(0, 0, 0, 255)":
-            //black pixel
             gameGrid[y][x].type = "wall";
             walls.push(gameGrid[y][x])
             break;
           case "rgba(255, 165, 0, 255)":
-            //orange pixel
             gameGrid[y][x].type = "start";
             start = gameGrid[y][x];
             break;
           case "rgba(0, 0, 255, 255)":
-            //blue pixel
             gameGrid[y][x].type = "end";
             end = gameGrid[y][x];
             break;
           default:
-          //transparent pixel
         }
       }
     }
-    //------------------------------Pathfinder-------------------------------//
 
     function findPath() {
-      //Search
-      //Priority queue
       let open = new Set();
       open.add(start);
       start.gCost = 0;
       start.hCost = Math.floor((calcHCost(start, end) + tieBreak(start)) * decPlace) / decPlace;
       start.fCost = calcFCost(start.gCost, start.hCost);
-      //empty set
       let closed = new Set();
       let current = start;
 
-      //Draw Path
       function drawPath(path, delay) {
         let pathIndex = 0;
         function recursor() {
@@ -641,7 +570,6 @@
         }
         recursor();
       }
-      //Draw tempPath
       function drawTempPath(path) {
         let pathIndex = 0;
         function recursor() {
@@ -656,13 +584,11 @@
       let stepCount = 0;
       steps.textContent = 0;
       pathLength.textContent = 0;
-      // while (open.size>0&&stop<100) {
       recursiveLoop();
       function recursiveLoop() {
         stepCount += 1;
         steps.textContent = stepCount;
         pathLength.textContent = current.gCost;
-        //-------------------------Draw Progress------------------------//
         onScreenCTX.clearRect(0, 0, 512, 320)
         for (let i = 0; i < offScreenCVS.height; i++) {
           for (let j = 0; j < offScreenCVS.width; j++) {
@@ -706,11 +632,8 @@
         onScreenCTX.fillRect(current.x * tileSize + 1, current.y * tileSize + 1, tileSize - 2, tileSize - 2);
         onScreenCTX.fillStyle = "black";
         onScreenCTX.fillText(current.fCost, current.x * tileSize, current.y * tileSize + (tileSize / 2));
-        //------------------------Drawing Done----------------------------//
-        //Remove lowest fCost from open and add it to closed
         open.delete(current);
         closed.add(current);
-        //End case
         if (current === end) {
           let curr = current;
           let tempPath = [];
@@ -719,53 +642,43 @@
             curr = curr.parent;
           }
           tempPath.push(curr);
-          //-------------------Draw Path-----------------------//
           let truePath = tempPath.reverse();
           drawPath(truePath, delaySlider.value);
           return truePath;
         }
-        //Eight neighbors
         let neighbors = [];
         let east, west, south, north, northeast, northwest, southeast, southwest;
         if (gameGrid[current.y][current.x + 1]) {
-          //east
           east = gameGrid[current.y][current.x + 1];
           neighbors.push(east);
         }
         if (gameGrid[current.y][current.x - 1]) {
-          //west
           west = gameGrid[current.y][current.x - 1];
           neighbors.push(west);
         }
         if (gameGrid[current.y + 1]) {
-          //south
           south = gameGrid[current.y + 1][current.x];
           neighbors.push(south);
           if (diagonals) {
             if (gameGrid[current.y + 1][current.x - 1]) {
-              //southwest
               southwest = gameGrid[current.y + 1][current.x - 1];
               neighbors.push(southwest);
             }
             if (gameGrid[current.y + 1][current.x + 1]) {
-              //southeast
               southeast = gameGrid[current.y + 1][current.x + 1];
               neighbors.push(southeast);
             }
           }
         }
         if (gameGrid[current.y - 1]) {
-          //north
           north = gameGrid[current.y - 1][current.x];
           neighbors.push(north);
           if (diagonals) {
             if (gameGrid[current.y - 1][current.x - 1]) {
-              //northwest
               northwest = gameGrid[current.y - 1][current.x - 1];
               neighbors.push(northwest);
             }
             if (gameGrid[current.y - 1][current.x + 1]) {
-              //northeast
               northeast = gameGrid[current.y - 1][current.x + 1];
               neighbors.push(northeast);
             }
@@ -777,7 +690,6 @@
           if (neighbor.type === "wall" || closed.has(neighbor)) {
             continue;
           }
-          //Check corners
           if (neighbor === northeast) {
             if ((north.type === "wall") && (east.type === "wall")) {
               continue;
@@ -799,11 +711,9 @@
             }
           }
           let tCost = euclid(neighbor, current);
-          //For new tiles
           if (!(open.has(neighbor) || closed.has(neighbor))) {
             if (neighbor != start) {neighbor.parent = current;}
             open.add(neighbor);
-            //Round the costs to take care of floating point errors.
             neighbor.gCost = calcGCost(neighbor);
             neighbor.hCost = Math.floor((calcHCost(neighbor, end) + tieBreak(neighbor)) * decPlace) / decPlace;
             neighbor.fCost = calcFCost(neighbor.gCost, neighbor.hCost);
@@ -813,15 +723,12 @@
             neighbor.fCost = calcFCost(neighbor.gCost, neighbor.hCost);
           }
         }
-        //make current lowest fCost
         let arr = [...open]
         arr.sort(compareFCost)
         current = arr[0]
         if (open.size > 0) {setTimeout(recursiveLoop, delaySlider.value)};
       }
-      // }
     }
-    //---------------------------Find Path-----------------------------//
     let generateBtn = document.querySelector(".generate-btn")
 
     generateBtn.addEventListener("click", makePath);

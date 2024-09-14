@@ -425,7 +425,6 @@
         this.help = new Helper(this.time, this.list);
       }
 
-      // BUBBLE SORT
       BubbleSort = async () => {
         for (let i = 0; i < this.size - 1; ++i) {
           for (let j = 0; j < this.size - i - 1; ++j) {
@@ -442,7 +441,6 @@
         this.list[0].setAttribute("class", "cell done");
       }
 
-      // INSERTION SORT
       InsertionSort = async () => {
         for (let i = 0; i < this.size - 1; ++i) {
           let j = i;
@@ -461,7 +459,6 @@
         }
       }
 
-      // SELECTION SORT
       SelectionSort = async () => {
         for (let i = 0; i < this.size; ++i) {
           let minIndex = i;
@@ -484,7 +481,6 @@
         }
       }
 
-      // MERGE SORT
       MergeSort = async () => {
         await this.MergeDivider(0, this.size - 1);
         for (let counter = 0; counter < this.size; ++counter) {
@@ -541,7 +537,6 @@
         }
       }
 
-      // QUICK SORT
       QuickSort = async () => {
         await this.QuickDivider(0, this.size - 1);
         for (let c = 0; c < this.size; ++c) {
