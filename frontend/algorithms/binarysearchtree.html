@@ -43,18 +43,48 @@
       width: 100%;
       text-align: center;
     }
+
+    #searchLabel {
+      font-size: 20px;
+      text-align: center;
+      height: 30px;
+    }
+
+    #fname {
+      width: 50px;
+      height: 30px;
+      border-radius: 5px;
+      font-size: 20px;
+      text-align: center;
+      margin-left: 5px;
+    }
+
+    #btn {
+      width: 100px;
+      height: 30px;
+      border-radius: 5px;
+      font-size: 20px;
+      text-align: center;
+      margin-left: 5px;
+
+      &:hover {
+        background-color: #6b5b95;
+        color: white;
+        cursor: pointer;
+      }
+    }
   </style>
 
 </head>
 
 <body>
   <br />
-  <p class="header">Binary Search</p>
+  <p class="header">Binary Search Tree Visualizer</p>
   <div id="array"></div>
   <br /><br />
 
   <div style="text-align: center">
-    <label for="fname">
+    <label id="searchLabel" for="fname">
       Number to be Searched:
     </label>
     <input type="text" id="fname" name="fname" />
